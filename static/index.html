@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Qwen3.5 LiveTranslate Demo</title>
+    <link rel="stylesheet" href="/static/styles.css?v=20260522-github-social-chip" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>Qwen3.5 LiveTranslate</h1>
+          <nav class="mode-tabs" aria-label="Demo mode">
+            <button id="micTab" class="mode-tab active" type="button">Microphone</button>
+            <button id="cameraTab" class="mode-tab" type="button">Camera</button>
+          </nav>
+        </div>
+        <div class="status-pill">
+          <span id="statusDot" class="status-dot"></span>
+          <span id="statusText">Idle</span>
+        </div>
+      </header>
+
+      <section id="workspace" class="workspace">
+        <article id="cameraPanel" class="panel camera-panel" hidden>
+          <div class="panel-label">Camera context</div>
+          <div class="camera-stage">
+            <video id="cameraPreview" autoplay muted playsinline></video>
+            <div id="cameraSubtitle" class="camera-subtitle">Translated subtitles will appear here.</div>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panel-label">Source transcript</div>
+          <div id="sourceText" class="live-text placeholder">Press Start and speak into the microphone.</div>
+        </article>
+        <article class="panel translation-panel">
+          <div class="panel-label">Translation</div>
+          <div id="translationText" class="live-text translation-text placeholder">Translation will appear here.</div>
+        </article>
+      </section>
+
+      <section id="audioRecord" class="audio-record" hidden>
+        <div class="audio-record-icon">♪</div>
+        <div class="audio-record-meta">
+          <div class="audio-record-title">Translated audio record</div>
+          <div id="audioRecordDetails" class="audio-record-details">Available after Stop</div>
+        </div>
+        <audio id="audioRecordPlayer" controls></audio>
+      </section>
+
+      <section class="controls">
+        <div class="control-group credentials-group">
+          <label class="api-key-label">
+            <span class="label-with-help">
+              API key
+              <button id="apiKeyHelpButton" class="help-button" type="button" aria-label="Open API key console">?</button>
+            </span>
+            <span class="api-key-field">
+              <input id="apiKey" class="api-key-input" type="password" autocomplete="off" placeholder="DashScope key" />
+              <button id="forgetKeyButton" class="icon-button" type="button" aria-label="Clear API key">×</button>
+            </span>
+          </label>
+          <label>
+            Region
+            <select id="region">
+              <option value="mainland" selected>Chinese mainland</option>
+              <option value="intl">Singapore / Intl</option>
+            </select>
+          </label>
+        </div>
+        <div class="settings-group">
+          <div class="control-group language-group">
+            <label>
+              Source
+              <select id="sourceLanguage"></select>
+            </label>
+            <label>
+              Target
+              <select id="targetLanguage"></select>
+            </label>
+          </div>
+          <div class="control-group visual-group camera-control" hidden>
+            <label>
+              Camera
+              <select id="cameraDevice"></select>
+            </label>
+            <label class="toggle camera-control" hidden>
+              <input id="visualContextEnabled" type="checkbox" checked />
+              <span>Visual context</span>
+            </label>
+            <label class="compact-control">
+              Frames
+              <select id="frameRate">
+                <option value="1" selected>1 fps</option>
+                <option value="2">2 fps</option>
+              </select>
+            </label>
+          </div>
+          <div class="control-group output-group">
+            <div class="output-fields">
+              <label class="switch-field">
+                <span class="field-label">Voice output</span>
+                <span class="toggle compact-toggle output-toggle">
+                  <input id="audioEnabled" type="checkbox" checked />
+                  <span id="audioToggleText">On</span>
+                </span>
+              </label>
+              <label>
+                Voice clone
+                <select id="voiceCloneMode">
+                  <option value="off" selected>Off</option>
+                  <option value="once">Clone once (single speaker)</option>
+                  <option value="always">Clone each response (per turn)</option>
+                </select>
+              </label>
+              <label>
+                Voice
+                <select id="voice"></select>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="control-group action-group">
+          <button id="startButton" class="primary-action" type="button">Start</button>
+          <button id="stopButton" class="danger-action" type="button" disabled>Stop</button>
+          <button id="clearButton" class="secondary-button" type="button">Clear</button>
+        </div>
+      </section>
+
+      <footer class="meter-row">
+        <div class="meter"><div id="levelBar"></div></div>
+        <div id="metrics" class="metrics">Model: qwen3.5-livetranslate-flash-realtime</div>
+        <div class="social-footer" aria-label="Project links">
+          <a class="social-link github-social-link" href="https://github.com/modelstudioai" target="_blank" rel="noopener noreferrer" aria-label="Open Model Studio AI on GitHub">
+            <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2C6.48 2 2 6.58 2 12.22c0 4.5 2.87 8.32 6.84 9.67.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.88-2.78.62-3.37-1.22-3.37-1.22-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.56 2.35 1.11 2.92.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.05 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05A9.29 9.29 0 0 1 12 6.91c.85 0 1.7.12 2.5.34 1.9-1.32 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.92-2.34 4.79-4.57 5.04.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.8 0 .27.18.59.69.49A10.11 10.11 0 0 0 22 12.22C22 6.58 17.52 2 12 2Z" />
+            </svg>
+            <span>GitHub</span>
+            <span class="github-qr-popover" aria-hidden="true">
+              <img src="/static/github-qr.svg" alt="" />
+              <span>github.com/modelstudioai</span>
+            </span>
+          </a>
+        </div>
+      </footer>
+    </main>
+    <script src="/static/app.js?v=20260522-voice-config-default-on"></script>
+  </body>
+</html>
