@@ -19,3 +19,6 @@ yarn-error.log*
 dist/
 build/
 coverage/
+
+# Internal-only documents, must not be published
+OPENSOURCE_APPLICATION.md
