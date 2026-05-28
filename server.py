@@ -245,7 +245,7 @@ def build_source_config_header(details: dict[str, Any]) -> str:
 
 
 def should_send_source_config_header(config: dict[str, Any]) -> bool:
-    return parse_bool(config.get("source_config_enabled"), False)
+    return parse_bool(config.get("source_config_enabled"), True)
 
 
 def should_use_minimal_session(config: dict[str, Any]) -> bool:
