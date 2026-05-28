@@ -125,4 +125,4 @@ python3 check_access.py intl
 
 ## License
 
-发布仓库前请补充 License。Demo 项目通常可以选择 Apache-2.0 或 MIT。
+Apache-2.0
