@@ -237,7 +237,7 @@ const storedApiKey = localStorage.getItem("dashscope_api_key");
 if (storedApiKey) apiKeyInput.value = storedApiKey;
 
 function isSourceConfigHeaderEnabled() {
-  return new URLSearchParams(window.location.search).get("source_header") === "1";
+  return new URLSearchParams(window.location.search).get("source_header") !== "0";
 }
 
 function isMinimalSessionEnabled() {
