@@ -112,4 +112,4 @@ python3 check_access.py intl
 
 ## License
 
-Add a license before publishing the repository. Apache-2.0 or MIT are common choices for demos.
+Apache-2.0
